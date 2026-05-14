@@ -1,0 +1,25 @@
+{
+  "name": "sayyam-fragrance-pos",
+  "version": "1.0.0",
+  "description": "Sayyam Fragrance POS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "node server.js",
+    "dev": "node server.js",
+    "kr": "node server.js"
+  },
+  "keywords": [
+    "pos",
+    "point-of-sale",
+    "sqlite",
+    "retail"
+  ],
+  "author": "Faizan",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "express": "^5.2.1",
+    "uuid": "^13.0.0"
+  }
+}
