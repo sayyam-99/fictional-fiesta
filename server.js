@@ -12,10 +12,16 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 // MySQL not used — SQLite is the primary database
 const mysqlDb = null;
+
+function uuidv4() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.randomBytes(1)[0] & 15 >> c / 4).toString(16)
+  );
+}
 
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password + 'artisan-pos-salt').digest('hex');

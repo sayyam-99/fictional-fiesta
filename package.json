@@ -19,7 +19,6 @@
   "author": "Faizan",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1",
-    "uuid": "^13.0.0"
+    "express": "^5.2.1"
   }
 }
