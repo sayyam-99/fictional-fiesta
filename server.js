@@ -21,9 +21,15 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password + 'artisan-pos-salt').digest('hex');
 }
 
-// Use /tmp on Vercel for writable temporary storage; otherwise use project db folder.
-const DB_ROOT = process.env.VERCEL ? path.join('/tmp', 'db') : path.join(__dirname, 'db');
-fs.mkdirSync(DB_ROOT, { recursive: true });
+const localDbRoot = path.join(__dirname, 'db');
+let DB_ROOT = localDbRoot;
+try {
+  fs.mkdirSync(DB_ROOT, { recursive: true });
+} catch (err) {
+  console.warn('⚠️  Local database folder not writable, falling back to /tmp/db');
+  DB_ROOT = path.join('/tmp', 'db');
+  fs.mkdirSync(DB_ROOT, { recursive: true });
+}
 
 const app = express();
 
