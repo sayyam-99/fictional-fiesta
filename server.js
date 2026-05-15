@@ -21,8 +21,9 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password + 'artisan-pos-salt').digest('hex');
 }
 
-// Ensure database folder exists
-fs.mkdirSync(path.join(__dirname, 'db'), { recursive: true });
+// Use /tmp on Vercel for writable temporary storage; otherwise use project db folder.
+const DB_ROOT = process.env.VERCEL ? path.join('/tmp', 'db') : path.join(__dirname, 'db');
+fs.mkdirSync(DB_ROOT, { recursive: true });
 
 const app = express();
 
@@ -66,7 +67,7 @@ app.post('/add-product', (req, res) => {
 let db;
 try {
   const Database = require('better-sqlite3');
-  db = new Database(path.join(__dirname, 'db', 'pos.db'));
+  db = new Database(path.join(DB_ROOT, 'pos.db'));
   db.pragma('journal_mode = WAL');
 
   db.exec(`
@@ -179,9 +180,9 @@ if (forceFileDB) {
   db = null;
 }
 
-const PRODUCT_FILE = path.join(__dirname, 'db', 'products.json');
-const SALES_FILE = path.join(__dirname, 'db', 'sales.json');
-const SALE_ITEMS_FILE = path.join(__dirname, 'db', 'sale_items.json');
+const PRODUCT_FILE = path.join(DB_ROOT, 'products.json');
+const SALES_FILE = path.join(DB_ROOT, 'sales.json');
+const SALE_ITEMS_FILE = path.join(DB_ROOT, 'sale_items.json');
 let memProducts = [];
 let memSales = [];
 let memSaleItems = [];
@@ -627,6 +628,11 @@ app.get(/^\/(?!api\/).*/, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🥐 Sayyam Fragrance POS running at http://localhost:${PORT}\n`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🥐 Sayyam Fragrance POS running at http://localhost:${PORT}\n`);
+  });
+}
+
+module.exports = app;
+module.exports.default = app;

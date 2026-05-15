@@ -10,3 +10,5 @@ db/*.db
 db/*.db-shm
 db/*.db-wal
 pos.zip
+.vercel
+.env*.local
