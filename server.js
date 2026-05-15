@@ -50,9 +50,8 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-// Serve from both root and public/ folder
+// Serve only public assets if needed, but do not expose the app front-end on the root path.
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname)));
 
 // ─── MySQL Example Route (optional) ───────────────────────────────────────────
 app.post('/add-product', (req, res) => {
@@ -620,17 +619,11 @@ app.get('/api/reports/daily', (req, res) => {
 
 // Serve frontend — catch-all for SPA routes
 app.get('/', (req, res) => {
-  const publicPath = path.join(__dirname, 'public', 'index.html');
-  const rootPath = path.join(__dirname, 'index.html');
-  if (fs.existsSync(publicPath)) return res.sendFile(publicPath);
-  return res.sendFile(rootPath);
+  res.status(404).send('Not Found');
 });
 
 app.get(/^\/(?!api\/).*/, (req, res) => {
-  const publicPath = path.join(__dirname, 'public', 'index.html');
-  const rootPath = path.join(__dirname, 'index.html');
-  if (fs.existsSync(publicPath)) return res.sendFile(publicPath);
-  return res.sendFile(rootPath);
+  res.status(404).send('Not Found');
 });
 
 const PORT = process.env.PORT || 3000;
